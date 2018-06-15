@@ -23,7 +23,9 @@ def game_loop():
 		user_input = view.main_menu()
 		if user_input.lower() in acceptable_inputs:
 			if user_input.lower() in buy_inputs:
-				pass
+				ticker_symbol, trade_volume = view.buy_menu()
+				status = model.buy(ticker_symbol, trade_volume)
+				return status
 			elif user_input.lower() in sell_inputs:
 				pass
 			elif user_input.lower() in lookup_inputs:
