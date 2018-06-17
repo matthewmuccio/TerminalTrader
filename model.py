@@ -35,6 +35,12 @@ def buy(ticker_symbol, trade_volume):
 		cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
 		ticker_symbols = cursor.fetchall()
 		if len(ticker_symbols) == 0:
+			# State: update the balance in the row in users table with the given username.
+			username = "matthewmuccio"
+			cursor.execute("SELECT balance FROM users WHERE username=?", (username,))
+			new_balance = cursor.fetchall()[0][0] - transaction_cost
+			cursor.execute("UPDATE users SET balance=? WHERE username=?", (new_balance, username,))
+
 			cursor.execute("""INSERT INTO holdings(
 						ticker_symbol,
 						number_of_shares,

@@ -23,20 +23,22 @@ def game_loop():
 		user_input = view.main_menu()
 		if user_input.lower() in acceptable_inputs:
 			if user_input.lower() in buy_inputs:
-				for i in range(2):
-					ticker_symbol, trade_volume = view.buy_menu()
-					status = model.buy(ticker_symbol, trade_volume)
-					print(status)
+				ticker_symbol, trade_volume = view.buy_menu()
+				status = model.buy(ticker_symbol, trade_volume)
+				print(status)
+				#return status
 			elif user_input.lower() in sell_inputs:
 				pass
 			elif user_input.lower() in lookup_inputs:
 				company_name = view.lookup_menu()
 				ticker_symbol = model.get_ticker_symbol(company_name)
-				return ticker_symbol
+				print(ticker_symbol)
+				#return ticker_symbol
 			elif user_input.lower() in quote_inputs:
 				ticker_symbol = view.quote_menu()
 				last_price = model.get_last_price(ticker_symbol)
-				return last_price
+				print(last_price)
+				#return last_price
 			elif user_input.lower() in exit_inputs:
 				# TODO: Add exit message in view module.
 				break
@@ -45,4 +47,5 @@ def game_loop():
 
 
 if __name__ == "__main__":
+	#print(game_loop())
 	game_loop()
