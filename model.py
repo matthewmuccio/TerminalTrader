@@ -33,7 +33,7 @@ def buy(ticker_symbol, trade_volume):
 		# TODO: Check if the user already has the stock, in the holdings table, before
 		# committing a write to the table.
 		cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
-		ticker_symbols = cursor.fetchall()[0]
+		ticker_symbols = cursor.fetchall()
 		if len(ticker_symbols) == 0:
 			cursor.execute("""INSERT INTO holdings(
 						ticker_symbol,
@@ -41,13 +41,17 @@ def buy(ticker_symbol, trade_volume):
 						volume_weighted_average_price
 					) VALUES(?,?,?);""", (ticker_symbol, trade_volume, last_price,)
 			)
+			connection.commit()
 			return "Trade was successful."
 		else:
 			# TODO: State: the stock the user bought is already in the database
 			# so we need to update the row with the ticker symbol with a new values
 			# for trade_volume and last_price.
-			return "TODO"
-		connection.commit()
+			cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
+			new_number_of_shares = cursor.fetchall()[0][0] + int(trade_volume)
+			cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=?", (new_number_of_shares, ticker_symbol,))
+			connection.commit()
+			return "Trade was successful."
 		cursor.close()
 		connection.close()
 	else:
