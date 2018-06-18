@@ -47,6 +47,8 @@ def buy(ticker_symbol, trade_volume):
 					) VALUES(?,?,?);""", (ticker_symbol, trade_volume, last_price,)
 			)
 			connection.commit()
+			cursor.close()
+			connection.close()
 			return "Trade was successful."
 		else:
 			# TODO: State: the stock the user bought is already in the database
@@ -56,10 +58,12 @@ def buy(ticker_symbol, trade_volume):
 			new_number_of_shares = cursor.fetchall()[0][0] + int(trade_volume)
 			cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=?", (new_number_of_shares, ticker_symbol,))
 			connection.commit()
+			cursor.close()
+			connection.close()
 			return "Stock purchase was successful."
+	else:
 		cursor.close()
 		connection.close()
-	else:
 		return "Error: You do not have enough money in your balance to execute that trade."
 
 def sell(ticker_symbol, trade_volume):
@@ -94,8 +98,12 @@ def sell(ticker_symbol, trade_volume):
 		cursor.execute("UPDATE users SET balance=? WHERE username=?", (new_balance, username,))
 		cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=?", (new_number_of_shares, ticker_symbol,))
 		connection.commit()
+		cursor.close()
+		connection.close()
 		return "Stock sell was successful."
 	else:
+		cursor.close()
+		connection.close()
 		return "Error: You do not have enough shares to sell to complete that trade."
 
 
