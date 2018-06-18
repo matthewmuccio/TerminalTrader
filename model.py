@@ -90,8 +90,9 @@ def sell(ticker_symbol, trade_volume):
 	new_number_of_shares = number_of_shares - int(trade_volume)
 	last_price = get_last_price(ticker_symbol)
 	balance_to_add = (last_price * float(trade_volume)) - brokerage_fee
+	# TODO: Delete the row from holdings table if the new number of shares would be 0.
 	# If the user does not hold enough shares to complete their trade.
-	if int(trade_volume) < number_of_shares:
+	if int(trade_volume) <= number_of_shares:
 		username = "matthewmuccio"
 		cursor.execute("SELECT balance FROM users WHERE username=?", (username,))
 		new_balance = cursor.fetchall()[0][0] + balance_to_add
