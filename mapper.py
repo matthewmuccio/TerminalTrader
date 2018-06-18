@@ -68,3 +68,80 @@ def account_exists(username, password):
 	connection.close()
 	return result
 
+### SELECT (GET)
+
+# Gets the balance value from the row in the users database table for the given username.
+def get_balance(username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("SELECT balance FROM users WHERE username=?", (username,))
+	balance = cursor.fetchall()[0][0]
+	cursor.close()
+	connection.close()
+	return balance
+
+# Gets the id value from the row in the users database table for the given username.
+def get_id(username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("SELECT id FROM users WHERE username=?", (username,))
+	id = cursor.fetchall()[0][0]
+	cursor.close()
+	connection.close()
+	return id
+
+# Gets the ticker symbols of the holdings of the user with the given username.
+def get_ticker_symbols(ticker_symbol, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol, get_id(username),))
+	ticker_symbols = cursor.fetchall()
+	cursor.close()
+	connection.close()
+	return ticker_symbols
+
+# Gets the number of shares for the given username from holdings database table.
+def get_number_of_shares(ticker_symbol, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol, get_id(username),))
+	number_of_shares = cursor.fetchall()[0][0]
+	cursor.close()
+	connection.close()
+	return number_of_shares
+
+### UPDATE / INSERT
+
+# Updates the user's balance in the users database table.
+def update_balance(new_balance, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("UPDATE users SET balance=? WHERE username=?", (new_balance, username,))
+	connection.commit()
+	cursor.close()
+	connection.close()
+
+# Updates the number of shares in the holdings database table with a new number of shares.
+def update_number_of_shares(new_number_of_shares, ticker_symbol, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=? AND user_id=?", (new_number_of_shares, ticker_symbol, get_id(username),))
+	connection.commit()
+	cursor.close()
+	connection.close()
+
+# Inserts a new row in the holdings database table.
+def insert_holdings_row(ticker_symbol, trade_volume, price, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("""INSERT INTO holdings(
+				ticker_symbol,
+				number_of_shares,
+				volume_weighted_average_price,
+				user_id
+			) VALUES(?,?,?,?);""", (ticker_symbol, trade_volume, price, get_id(username),)
+	)
+	connection.commit()
+	cursor.close()
+	connection.close()
+

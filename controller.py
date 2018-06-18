@@ -18,6 +18,7 @@ def start_menu():
 			if "Success" in status:
 				start_done = True
 				exit = view.wait("main menu")
+				return username
 			else:
 				exit = view.wait("previous menu")
 		elif user_input == "2":
@@ -27,6 +28,7 @@ def start_menu():
 			if "Success" in status:
 				start_done = True
 				exit = view.wait("main menu")
+				return username
 			else:
 				exit = view.wait("previous menu")
 		elif user_input == "3":
@@ -35,7 +37,7 @@ def start_menu():
 			print(status)
 			return "exit"
 
-def game_loop():
+def game_loop(username):
 	# Main menu (buy, sell, lookup, quote, exit)
 	main_done = False
 	while not main_done:
@@ -55,7 +57,7 @@ def game_loop():
 		if user_input.lower() in acceptable_inputs:
 			if user_input.lower() in buy_inputs:
 				ticker_symbol, trade_volume = view.buy_menu()
-				status = model.buy(ticker_symbol, trade_volume)
+				status = model.buy(ticker_symbol, trade_volume, username)
 				print(status)
 				exit = view.wait("previous menu")
 			elif user_input.lower() in sell_inputs:
@@ -84,4 +86,4 @@ def game_loop():
 if __name__ == "__main__":
 	result = start_menu()
 	if result != "exit":
-		game_loop()
+		game_loop(result)
