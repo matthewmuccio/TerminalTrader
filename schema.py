@@ -10,7 +10,7 @@ cursor = connection.cursor()
 # Create users table
 cursor.execute(
 	"""CREATE TABLE users(
-		pk INTEGER PRIMARY KEY AUTOINCREMENT,
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username VARCHAR(16),
 		password VARCHAR(32),
 		balance FLOAT
@@ -20,7 +20,7 @@ cursor.execute(
 # Create portfolio/holdings table
 cursor.execute(
 	"""CREATE TABLE holdings(
-		pk INTEGER PRIMARY KEY AUTOINCREMENT,
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		ticker_symbol VARCHAR UNIQUE,
 		number_of_shares INTEGER,
 		volume_weighted_average_price FLOAT
@@ -30,7 +30,7 @@ cursor.execute(
 # Create orders/transactions table
 cursor.execute(
 	"""CREATE TABLE orders(
-		pk INTEGER PRIMARY KEY AUTOINCREMENT,
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		unix_time FLOAT,
 		transaction_type BOOL,
 		last_price FLOAT,
