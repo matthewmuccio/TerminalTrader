@@ -23,7 +23,9 @@ cursor.execute(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		ticker_symbol VARCHAR UNIQUE,
 		number_of_shares INTEGER,
-		volume_weighted_average_price FLOAT
+		volume_weighted_average_price FLOAT,
+		user_id INTEGER,
+		FOREIGN KEY(user_id) REFERENCES users(id)
 	);"""
 )
 
@@ -34,7 +36,9 @@ cursor.execute(
 		unix_time FLOAT,
 		transaction_type BOOL,
 		last_price FLOAT,
-		trade_volume INTEGER
+		trade_volume INTEGER,
+		user_id INTEGER,
+		FOREIGN KEY(user_id) REFERENCES users(id)
 	);"""
 )
 
