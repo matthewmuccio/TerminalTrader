@@ -17,8 +17,10 @@ def buy_menu():
 	return ticker_symbol, trade_volume
 
 def sell_menu():
-	# TODO: Finish this function.
-	pass
+	display_header()
+	ticker_symbol = input("Ticker symbol: ")
+	trade_volume = input("Trade volume: ")
+	return ticker_symbol, trade_volume
 
 def main_menu():
 	display_header()

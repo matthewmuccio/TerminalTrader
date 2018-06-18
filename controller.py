@@ -28,7 +28,10 @@ def game_loop():
 				print(status)
 				#return status
 			elif user_input.lower() in sell_inputs:
-				pass
+				ticker_symbol, trade_volume = view.sell_menu()
+				status = model.sell(ticker_symbol, trade_volume)
+				print(status)
+				#return status
 			elif user_input.lower() in lookup_inputs:
 				company_name = view.lookup_menu()
 				ticker_symbol = model.get_ticker_symbol(company_name)

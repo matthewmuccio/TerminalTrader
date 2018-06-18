@@ -12,13 +12,12 @@ import wrapper
 
 def buy(ticker_symbol, trade_volume):
 	# Stuff we might need:
-	# - Market price
-	# - Volume (how many shares)
-	# - check trader's balance
-	# - ticker_symbol
+	# - Ticker symbol
+	# - Trade volume (number of shares)
+	# - Market price (via get_last_price())
+	# - User's balance for trading
 	# TODO: Replace the value for balance with a read operation from our database,
 	# which should eventually be in our mapper.
-	#user_balance = 5000.00
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
 	# TODO: Write a database read that retrieves the user balance from users table.
@@ -57,14 +56,48 @@ def buy(ticker_symbol, trade_volume):
 			new_number_of_shares = cursor.fetchall()[0][0] + int(trade_volume)
 			cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=?", (new_number_of_shares, ticker_symbol,))
 			connection.commit()
-			return "Trade was successful."
+			return "Stock purchase was successful."
 		cursor.close()
 		connection.close()
 	else:
 		return "Error: You do not have enough money in your balance to execute that trade."
 
-def sell():
-	pass
+def sell(ticker_symbol, trade_volume):
+	# Stuff we might need:
+	# - Ticker symbol
+	# - Trade volume (number of shares)
+	# - Market price (via get_last_price())
+	# - User's balance for trading
+	# TODO: Replace the value for balance with a read operation from our database,
+	# which should eventually be in our mapper.
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	# Check if the user holds any shares with the given ticker symbol.
+	cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
+	ticker_symbols = cursor.fetchall()
+	if len(ticker_symbols) == 0:
+		return "Error: You do not hold any shares from that company."
+	# TODO: Replace the hard-coded value with something that can handle an arbitrary username.
+	cursor.execute("SELECT balance FROM users WHERE username=?", ("matthewmuccio",))
+	user_balance = cursor.fetchall()[0][0] # fetchall() -> List of tuples of data.
+	brokerage_fee = 6.95
+	cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
+	number_of_shares = cursor.fetchall()[0][0]
+	new_number_of_shares = number_of_shares - int(trade_volume)
+	last_price = get_last_price(ticker_symbol)
+	balance_to_add = (last_price * float(trade_volume)) - brokerage_fee
+	# If the user does not hold enough shares to complete their trade.
+	if int(trade_volume) < number_of_shares:
+		username = "matthewmuccio"
+		cursor.execute("SELECT balance FROM users WHERE username=?", (username,))
+		new_balance = cursor.fetchall()[0][0] + balance_to_add
+		cursor.execute("UPDATE users SET balance=? WHERE username=?", (new_balance, username,))
+		cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=?", (new_number_of_shares, ticker_symbol,))
+		connection.commit()
+		return "Stock sell was successful."
+	else:
+		return "Error: You do not have enough shares to sell to complete that trade."
+
 
 def get_last_price(ticker_symbol):
 	endpoint = "http://dev.markitondemand.com/MODApis/Api/v2/Quote/json?symbol=" + ticker_symbol
