@@ -11,17 +11,22 @@ import view
 
 
 def buy(ticker_symbol, trade_volume, username):
-	# TODO: Add database support for reading from and writing to the orders (transactions) table.
-	balance = mapper.get_balance(username)
-	user_id = mapper.get_id(username)
 	last_price = get_last_price(ticker_symbol)
 	# Error handling: if the user enters a ticker symbol that does not exist.
 	if last_price == "exit":
 		print("The ticker symbol you entered does not exist.")
 		exit = view.wait("main menu")
 		return "exit"
+	balance = mapper.get_balance(username)
+	user_id = mapper.get_id(username)
 	brokerage_fee = 6.95
-	transaction_cost = last_price * float(trade_volume) + brokerage_fee
+	# Error handling: if the user enters a trade volume that is not a number.
+	try:
+		transaction_cost = last_price * float(trade_volume) + brokerage_fee
+	except ValueError:
+		print("The trade volume you entered is not valid.")
+		exit = view.wait("main menu")
+		return "exit"
 	if transaction_cost < balance:
 		# State: the user has enough money in their account to execute the trade.
 		ticker_symbols = mapper.get_ticker_symbols(ticker_symbol, username)
@@ -33,7 +38,9 @@ def buy(ticker_symbol, trade_volume, username):
 			mapper.update_balance(new_balance, username)
 			# Inserts a new row to the holdings database table after buying the stock.
 			mapper.insert_holdings_row(ticker_symbol, trade_volume, last_price, username)
-			return "Trade was successful."
+			# Inserts a new row to the orders database table after buying the stock.
+			mapper.insert_orders_row("buy", ticker_symbol, trade_volume, last_price, username)
+			return "Stock purchase was successful."
 		# If the user holds some stock from company with ticker_symbol.
 		else:
 			# Gets the number of shares from holdings database table for the company with ticker_symbol.
@@ -41,17 +48,26 @@ def buy(ticker_symbol, trade_volume, username):
 			new_number_of_shares = curr_number_of_shares + int(trade_volume)
 			# Updates the holdings database table with the new number of shares after buying stock.
 			mapper.update_number_of_shares(new_number_of_shares, ticker_symbol, username)
+			# Inserts a new row to the orders database table after buying the stock.
+			mapper.insert_orders_row("buy", ticker_symbol, trade_volume, last_price, username)
 			return "Stock purchase was successful."
 	else:
 		# Returns error response.
 		return "Error: You do not have enough money in your balance to execute that trade."
 
 def sell(ticker_symbol, trade_volume, username):
-	# TODO: Add database support for reading from and writing to the orders (transactions) table.
-	# Error handling: if the user enters a ticker symbol that does not exist.
 	last_price = get_last_price(ticker_symbol)
+	# Error handling: if the user enters a ticker symbol that does not exist.
 	if last_price == "exit":
 		print("The ticker symbol you entered does not exist.")
+		exit = view.wait("main menu")
+		return "exit"
+	brokerage_fee = 6.95
+	# Error handling: if the user enters a trade volume that is not a number.
+	try:
+		balance_to_add = last_price * float(trade_volume) - brokerage_fee
+	except ValueError:
+		print("The trade volume you entered is not valid.")
 		exit = view.wait("main menu")
 		return "exit"
 	# Checks if the user holds any stock from the company with ticker_symbol.
@@ -61,8 +77,6 @@ def sell(ticker_symbol, trade_volume, username):
 	balance = mapper.get_balance(username)
 	number_of_shares = mapper.get_number_of_shares(ticker_symbol, username)
 	new_number_of_shares = number_of_shares - int(trade_volume)
-	brokerage_fee = 6.95
-	balance_to_add = last_price * float(trade_volume) - brokerage_fee
 	# If the user holds enough shares to complete their trade.
 	if int(trade_volume) <= number_of_shares:
 		# If the new number of shares would be 0 after the user sells their shares.
@@ -75,6 +89,7 @@ def sell(ticker_symbol, trade_volume, username):
 		new_balance = balance + balance_to_add
 		# Updates users database table with the new balance after selling the stock.
 		mapper.update_balance(new_balance, username)
+		mapper.insert_orders_row("sell", ticker_symbol, trade_volume, last_price, username)
 		return "Stock sell was successful."
 	else:
 		# Returns error response.

@@ -3,6 +3,7 @@
 
 import hashlib
 import sqlite3
+import time
 
 
 # Encrypt a plaintext string (password) with SHA-512 cryptographic hash function.
@@ -140,6 +141,24 @@ def insert_holdings_row(ticker_symbol, trade_volume, price, username):
 				volume_weighted_average_price,
 				user_id
 			) VALUES(?,?,?,?);""", (ticker_symbol, trade_volume, price, get_id(username),)
+	)
+	connection.commit()
+	cursor.close()
+	connection.close()
+
+# Inserts a new row in the orders database table.
+def insert_orders_row(transaction_type, ticker_symbol, trade_volume, price, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	unix_time = round(time.time(), 2)
+	cursor.execute("""INSERT INTO orders(
+				unix_time,
+				transaction_type,
+				ticker_symbol,
+				last_price,
+				trade_volume,
+				user_id
+			) VALUES(?,?,?,?,?,?);""", (unix_time, transaction_type, ticker_symbol, price, trade_volume, get_id(username),)
 	)
 	connection.commit()
 	cursor.close()
