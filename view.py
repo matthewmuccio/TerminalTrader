@@ -4,6 +4,8 @@
 import getpass
 import os
 
+import mapper
+
 
 def display_header():
 	os.system("clear")
@@ -35,9 +37,10 @@ def login_menu():
 	password = getpass.getpass()
 	return username, password
 
-def main_menu():
+def main_menu(username):
 	display_header()
 	print("What do you want to do?")
+	print("Account balance: ${0}".format(format(mapper.get_balance(username), ".2f")))
 	print("Buy    / b - Buy stock at the current market price.")
 	print("Sell   / s - Sell stock at the current market price.")
 	print("Lookup / l - Look up the ticker symbol for a company.")

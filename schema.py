@@ -21,7 +21,7 @@ cursor.execute(
 cursor.execute(
 	"""CREATE TABLE holdings(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		ticker_symbol VARCHAR UNIQUE,
+		ticker_symbol VARCHAR,
 		number_of_shares INTEGER,
 		volume_weighted_average_price FLOAT,
 		user_id INTEGER,

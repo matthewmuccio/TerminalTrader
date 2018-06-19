@@ -53,7 +53,7 @@ def game_loop(username):
 					+quote_inputs\
 					+exit_inputs
 
-		user_input = view.main_menu()
+		user_input = view.main_menu(username)
 		if user_input.lower() in acceptable_inputs:
 			if user_input.lower() in buy_inputs:
 				ticker_symbol, trade_volume = view.buy_menu()
