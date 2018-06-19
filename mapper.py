@@ -145,3 +145,13 @@ def insert_holdings_row(ticker_symbol, trade_volume, price, username):
 	cursor.close()
 	connection.close()
 
+### DELETE
+
+# Deletes the row from holdings database table that contains a given ticker symbol.
+def delete_holdings_row(ticker_symbol):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("DELETE FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
+	connection.commit()
+	cursor.close()
+	connection.close()

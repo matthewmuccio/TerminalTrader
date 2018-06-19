@@ -2,7 +2,6 @@
 
 
 import json
-import sqlite3
 
 import requests
 
@@ -12,20 +11,20 @@ import wrapper
 
 def buy(ticker_symbol, trade_volume, username):
 	# TODO: Add database support for reading from and writing to the orders (transactions) table.
-	user_balance = mapper.get_balance(username)
+	balance = mapper.get_balance(username)
 	user_id = mapper.get_id(username)
 	last_price = get_last_price(ticker_symbol)
 	brokerage_fee = 6.95
 	transaction_cost = last_price * float(trade_volume) + brokerage_fee
-	if transaction_cost < user_balance:
+	if transaction_cost < balance:
 		# State: the user has enough money in their account to execute the trade.
 		ticker_symbols = mapper.get_ticker_symbols(ticker_symbol, username)
 		# If the user does not hold any stock from company with ticker_symbol.
 		if len(ticker_symbols) == 0:
 			# State: update the balance in the row in users table with the given username.
-			new_user_balance = user_balance - transaction_cost
+			new_balance = balance - transaction_cost
 			# Updates the user's balance in the users database table.
-			mapper.update_balance(new_user_balance, username)
+			mapper.update_balance(new_balance, username)
 			# Inserts a new row to the holdings database table after buying the stock.
 			mapper.insert_holdings_row(ticker_symbol, trade_volume, last_price, username)
 			return "Trade was successful."
@@ -41,48 +40,33 @@ def buy(ticker_symbol, trade_volume, username):
 		# Returns error response.
 		return "Error: You do not have enough money in your balance to execute that trade."
 
-def sell(ticker_symbol, trade_volume):
+def sell(ticker_symbol, trade_volume, username):
 	# TODO: Add database support for reading from and writing to the orders (transactions) table.
-	# TODO: Move most of this code (anything concerning database support) to the mapper.
-	connection = sqlite3.connect("master.db", check_same_thread=False)
-	cursor = connection.cursor()
 	# Checks if the user holds any stock from the company with ticker_symbol.
-	cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
-	ticker_symbols = cursor.fetchall()
-	# If the user does not hold any stock from the company with ticker_symbol.
+	ticker_symbols = mapper.get_ticker_symbols(ticker_symbol, username)
 	if len(ticker_symbols) == 0:
 		return "Error: You do not hold any shares from that company."
-	# TODO: Replace the hard-coded value with something that can handle an arbitrary username.
-	cursor.execute("SELECT balance FROM users WHERE username=?", (username,))
-	user_balance = cursor.fetchall()[0][0] # fetchall() -> List of tuples of data.
+	balance = mapper.get_balance(username)
 	brokerage_fee = 6.95
-	# Gets the user's number of shares from the company with ticker_symbol.
-	cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
-	number_of_shares = cursor.fetchall()[0][0]
+	number_of_shares = mapper.get_number_of_shares(ticker_symbol, username)
 	new_number_of_shares = number_of_shares - int(trade_volume)
 	last_price = get_last_price(ticker_symbol)
-	balance_to_add = (last_price * float(trade_volume)) - brokerage_fee
+	balance_to_add = last_price * float(trade_volume) - brokerage_fee
 	# If the user holds enough shares to complete their trade.
 	if int(trade_volume) <= number_of_shares:
 		# If the new number of shares would be 0 after the user sells their shares.
 		if new_number_of_shares == 0:
 			# Deletes the row from holdings database table for company with ticker_symbol.
-			cursor.execute("DELETE FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
+			mapper.delete_holdings_row(ticker_symbol)
 		else:
 			# Updates holdings database table with the new number of shares.
-			cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=?", (new_number_of_shares, ticker_symbol,))
-		new_user_balance = user_balance + balance_to_add
+			mapper.update_number_of_shares(new_number_of_shares, ticker_symbol, username)
+		new_balance = balance + balance_to_add
 		# Updates users database table with the new balance after selling the stock.
-		cursor.execute("UPDATE users SET balance=? WHERE username=?", (new_user_balance, username,))
-		# Commits changes to the database, closes cursor and connection, and returns successful response.
-		connection.commit()
-		cursor.close()
-		connection.close()
+		mapper.update_balance(new_balance, username)
 		return "Stock sell was successful."
 	else:
-		# Closes cursor and connection, and returns error response.
-		cursor.close()
-		connection.close()
+		# Returns error response.
 		return "Error: You do not have enough shares to sell to complete that trade."
 
 def get_last_price(ticker_symbol):

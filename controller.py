@@ -62,7 +62,7 @@ def game_loop(username):
 				exit = view.wait("previous menu")
 			elif user_input.lower() in sell_inputs:
 				ticker_symbol, trade_volume = view.sell_menu()
-				status = model.sell(ticker_symbol, trade_volume)
+				status = model.sell(ticker_symbol, trade_volume, username)
 				print(status)
 				exit = view.wait("previous menu")
 			elif user_input.lower() in lookup_inputs:
