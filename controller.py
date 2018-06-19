@@ -58,22 +58,34 @@ def game_loop(username):
 			if user_input.lower() in buy_inputs:
 				ticker_symbol, trade_volume = view.buy_menu()
 				status = model.buy(ticker_symbol, trade_volume, username)
-				print(status)
-				exit = view.wait("previous menu")
+				# Error handling from buy function in model.
+				if status != "exit":
+					print(status)
+					exit = view.wait("previous menu")
 			elif user_input.lower() in sell_inputs:
 				ticker_symbol, trade_volume = view.sell_menu()
 				status = model.sell(ticker_symbol, trade_volume, username)
-				print(status)
-				exit = view.wait("previous menu")
+				# Error handling from sell function in model.
+				if status != "exit":
+					print(status)
+					exit = view.wait("previous menu")
 			elif user_input.lower() in lookup_inputs:
 				company_name = view.lookup_menu()
+				# Error handling from get_ticker_symbol in model.
 				ticker_symbol = model.get_ticker_symbol(company_name)
-				print(ticker_symbol)
+				if ticker_symbol == "exit":
+					print("The company name you entered does not have a ticker symbol.")
+				else:
+					print(ticker_symbol)
 				exit = view.wait("previous menu")
 			elif user_input.lower() in quote_inputs:
 				ticker_symbol = view.quote_menu()
 				last_price = model.get_last_price(ticker_symbol)
-				print(last_price)
+				# Error handling from get_last_price function in model.
+				if last_price == "exit":
+					print("The ticker symbol you entered does not exist.")
+				else:
+					print(last_price)
 				exit = view.wait("previous menu")
 			elif user_input.lower() in exit_inputs:
 				status = view.exit_message()

@@ -7,6 +7,7 @@ import requests
 
 import mapper
 import wrapper
+import view
 
 
 def buy(ticker_symbol, trade_volume, username):
@@ -14,6 +15,11 @@ def buy(ticker_symbol, trade_volume, username):
 	balance = mapper.get_balance(username)
 	user_id = mapper.get_id(username)
 	last_price = get_last_price(ticker_symbol)
+	# Error handling: if the user enters a ticker symbol that does not exist.
+	if last_price == "exit":
+		print("The ticker symbol you entered does not exist.")
+		exit = view.wait("main menu")
+		return "exit"
 	brokerage_fee = 6.95
 	transaction_cost = last_price * float(trade_volume) + brokerage_fee
 	if transaction_cost < balance:
@@ -42,15 +48,20 @@ def buy(ticker_symbol, trade_volume, username):
 
 def sell(ticker_symbol, trade_volume, username):
 	# TODO: Add database support for reading from and writing to the orders (transactions) table.
+	# Error handling: if the user enters a ticker symbol that does not exist.
+	last_price = get_last_price(ticker_symbol)
+	if last_price == "exit":
+		print("The ticker symbol you entered does not exist.")
+		exit = view.wait("main menu")
+		return "exit"
 	# Checks if the user holds any stock from the company with ticker_symbol.
 	ticker_symbols = mapper.get_ticker_symbols(ticker_symbol, username)
 	if len(ticker_symbols) == 0:
 		return "Error: You do not hold any shares from that company."
 	balance = mapper.get_balance(username)
-	brokerage_fee = 6.95
 	number_of_shares = mapper.get_number_of_shares(ticker_symbol, username)
 	new_number_of_shares = number_of_shares - int(trade_volume)
-	last_price = get_last_price(ticker_symbol)
+	brokerage_fee = 6.95
 	balance_to_add = last_price * float(trade_volume) - brokerage_fee
 	# If the user holds enough shares to complete their trade.
 	if int(trade_volume) <= number_of_shares:
@@ -72,15 +83,26 @@ def sell(ticker_symbol, trade_volume, username):
 def get_last_price(ticker_symbol):
 	endpoint = "http://dev.markitondemand.com/MODApis/Api/v2/Quote/json?symbol=" + ticker_symbol
 	response = json.loads(requests.get(endpoint).text)
-	last_price = response["LastPrice"]
+	try:
+		last_price = response["LastPrice"]
+	except KeyError:
+		last_price = "exit"
 	return last_price
 
 def get_ticker_symbol(company_name):
 	endpoint = "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input=" + company_name
 	# TODO: Refactor this line so that it does not just take the first element in the
 	# iterable that is returned, and assume it's the symbol we want.
-	response = json.loads(requests.get(endpoint).text)[0]
-	ticker_symbol = response["Symbol"]
+	try:
+		response = json.loads(requests.get(endpoint).text)[0]
+	except IndexError:
+		ticker_symbol = "exit"
+	try:
+		ticker_symbol = response["Symbol"]
+	except KeyError:
+		ticker_symbol = "exit"
+	except UnboundLocalError:
+		ticker_symbol = "exit"
 	return ticker_symbol
 
 
