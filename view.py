@@ -24,18 +24,36 @@ def start_menu():
 	return user_input
 
 def create_account_menu():
-	display_header()
-	print("Create a Terminal Trader account ...")
-	username = input("Username: ")
-	password = getpass.getpass()
-	return username, password
+	done = False
+	while not done:
+		display_header()
+		print("Create a Terminal Trader account ...")
+		username = input("Username: ")
+		password1 = getpass.getpass()
+		password2 = getpass.getpass()
+		if password1 == password2:
+			done = True
+		else:
+			print("The passwords you entered did not match, please try again.")
+			exit = wait("menu again")
+			os.system("clear")
+	return username, password1
 
 def login_menu():
-	display_header()
-	print("Log in to your Terminal Trader account ...")
-	username = input("Username: ")
-	password = getpass.getpass()
-	return username, password
+	done = False
+	while not done:
+		display_header()
+		print("Log in to your Terminal Trader account ...")
+		username = input("Username: ")
+		password1 = getpass.getpass()
+		password2 = getpass.getpass()
+		if password1 == password2:
+			done = True
+		else:
+			print("The passwords you entered did not match, please try again.")
+			exit = wait("menu again")
+			os.system("clear")
+	return username, password1
 
 def main_menu(username):
 	display_header()
