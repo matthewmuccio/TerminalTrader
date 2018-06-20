@@ -97,7 +97,7 @@ def get_id(username):
 def get_ticker_symbols(ticker_symbol, username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol, get_id(username),))
+	cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol.upper(), get_id(username),))
 	ticker_symbols = cursor.fetchall()
 	cursor.close()
 	connection.close()
@@ -107,7 +107,7 @@ def get_ticker_symbols(ticker_symbol, username):
 def get_number_of_shares(ticker_symbol, username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol, get_id(username),))
+	cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol.upper(), get_id(username),))
 	number_of_shares = cursor.fetchall()[0][0]
 	cursor.close()
 	connection.close()
@@ -135,7 +135,7 @@ def update_balance(new_balance, username):
 def update_number_of_shares(new_number_of_shares, ticker_symbol, username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=? AND user_id=?", (new_number_of_shares, ticker_symbol, get_id(username),))
+	cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=? AND user_id=?", (new_number_of_shares, ticker_symbol.upper(), get_id(username),))
 	connection.commit()
 	cursor.close()
 	connection.close()
@@ -149,7 +149,7 @@ def insert_holdings_row(ticker_symbol, trade_volume, price, username):
 				number_of_shares,
 				volume_weighted_average_price,
 				user_id
-			) VALUES(?,?,?,?);""", (ticker_symbol, trade_volume, price, get_id(username),)
+			) VALUES(?,?,?,?);""", (ticker_symbol.upper(), trade_volume, price, get_id(username),)
 	)
 	connection.commit()
 	cursor.close()
@@ -167,7 +167,7 @@ def insert_orders_row(transaction_type, ticker_symbol, trade_volume, price, user
 				last_price,
 				trade_volume,
 				user_id
-			) VALUES(?,?,?,?,?,?);""", (unix_time, transaction_type, ticker_symbol, price, trade_volume, get_id(username),)
+			) VALUES(?,?,?,?,?,?);""", (unix_time, transaction_type, ticker_symbol.upper(), price, trade_volume, get_id(username),)
 	)
 	connection.commit()
 	cursor.close()
@@ -179,7 +179,7 @@ def insert_orders_row(transaction_type, ticker_symbol, trade_volume, price, user
 def delete_holdings_row(ticker_symbol):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("DELETE FROM holdings WHERE ticker_symbol=?", (ticker_symbol,))
+	cursor.execute("DELETE FROM holdings WHERE ticker_symbol=?", (ticker_symbol.upper(),))
 	connection.commit()
 	cursor.close()
 	connection.close()
