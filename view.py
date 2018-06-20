@@ -114,11 +114,15 @@ def display_response(res):
 	exit = wait("previous menu")
 
 def display_ticker_symbol(ticker_symbol):
-	if ticker_symbol != "exit":
+	if ticker_symbol == "exit":
+		print("The company name that you entered does not exist.")
+	else:
 		print(ticker_symbol)
-		exit = wait("previous menu")
+	exit = wait("previous menu")
 
 def display_last_price(last_price):
-	if last_price != "exit":
+	if last_price == "exit":
+		print("The ticker symbol that you entered does not exist.")
+	else:
 		print(last_price)
-		exit = wait("previous menu")
+	exit = wait("previous menu")
