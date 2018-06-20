@@ -5,6 +5,8 @@ import hashlib
 import sqlite3
 import time
 
+import pandas as pd
+
 
 # Encrypt a plaintext string (password) with SHA-512 cryptographic hash function.
 def encrypt_password(password):
@@ -110,6 +112,12 @@ def get_number_of_shares(ticker_symbol, username):
 	cursor.close()
 	connection.close()
 	return number_of_shares
+
+# Creates a new pandas DataFrame that contains the rows in holdings database table for the given user.
+def get_holdings_data_frame(username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	df = pd.read_sql_query("SELECT * FROM holdings WHERE user_id=?", (get_id(username),))
+	return df
 
 ### UPDATE / INSERT
 

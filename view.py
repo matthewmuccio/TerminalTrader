@@ -4,14 +4,17 @@
 import getpass
 import os
 
-import mapper
-
 
 def display_header():
 	os.system("clear")
 	print("=".center(65, "="))
 	print("Terminal Trader".center(65, " "))
 	print("=".center(65, "="))
+
+#def display_holdings(username):
+#	df = mapper.get_holdings_data_frame(username)
+#	print(df)
+#	exit = wait("main menu")
 
 def start_menu():
 	display_header()
@@ -58,14 +61,19 @@ def login_menu():
 def main_menu(username):
 	display_header()
 	print("What do you want to do?")
-	print("Account balance: ${0}".format(format(mapper.get_balance(username), ".2f")))
-	print("Buy    / b - Buy stock at the current market price.")
-	print("Sell   / s - Sell stock at the current market price.")
-	print("Lookup / l - Look up the ticker symbol for a company.")
-	print("Quote  / q - Get the current market price for a company's stock.")
-	print("Exit   / e - Exit Terminal Trader.")
+	print("Balance / a - Check your account balance.")
+	print("Buy     / b - Buy stock at the current market price.")
+	print("Sell    / s - Sell stock at the current market price.")
+	print("Lookup  / l - Look up the ticker symbol for a company.")
+	print("Quote   / q - Get the current market price for a company's stock.")
+	print("Exit    / e - Exit Terminal Trader.")
 	user_input = input()
 	return user_input
+
+def balance_menu(balance):
+	display_header()
+	print("Account Balance: ${0}".format(format(balance, ".2f")))
+	exit = wait("previous menu")
 
 def buy_menu():
 	display_header()
@@ -91,11 +99,28 @@ def quote_menu():
 
 def exit_message():
 	display_header()
-	return "Thanks for playing Terminal Trader!\n"
+	print("Thanks for playing Terminal Trader!\n")
+
 
 def wait(str):
 	x = input("\nPress \"Enter\" to access the {0} ...".format(str))
 	return x
+
+### Error handling and displaying
+def display_response(res):
+	if res != "exit":
+		print(res)
+	exit = wait("previous menu")
+
+def display_ticker_symbol(ticker_symbol):
+	if ticker_symbol != "exit":
+		print(ticker_symbol)
+		exit = wait("previous menu")
+
+def display_last_price(last_price):
+	if last_price != "exit":
+		print(last_price)
+		exit = wait("previous menu")
 
 
 if __name__ == "__main__":
