@@ -122,7 +122,3 @@ def display_last_price(last_price):
 	if last_price != "exit":
 		print(last_price)
 		exit = wait("previous menu")
-
-
-if __name__ == "__main__":
-	print(buy_menu())
