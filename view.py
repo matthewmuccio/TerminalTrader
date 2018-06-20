@@ -100,7 +100,11 @@ def exit_message():
 
 def display_dataframe(df):
 	display_header()
-	print(df)
+	if df.empty:
+		print("There is no portfolio to display.")
+		print("You must make a trade first.")
+	else:
+		print(df)
 	exit = wait("previous menu")
 
 def wait(str):
