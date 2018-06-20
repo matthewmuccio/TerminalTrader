@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 
-import requests
-
 import mapper
 import wrapper
 
@@ -14,7 +12,6 @@ def buy(ticker_symbol, trade_volume, username):
 		print("The ticker symbol that you entered does not exist.")
 		return "exit"
 	balance = mapper.get_balance(username)
-	user_id = mapper.get_id(username)
 	brokerage_fee = 6.95
 	# Error handling: if the user enters a trade volume that is not a number.
 	try:

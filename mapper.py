@@ -83,21 +83,11 @@ def get_balance(username):
 	connection.close()
 	return balance
 
-# Gets the id value from the row in the users database table for the given username.
-def get_id(username):
-	connection = sqlite3.connect("master.db", check_same_thread=False)
-	cursor = connection.cursor()
-	cursor.execute("SELECT id FROM users WHERE username=?", (username,))
-	id = cursor.fetchall()[0][0]
-	cursor.close()
-	connection.close()
-	return id
-
 # Gets the ticker symbols of the holdings of the user with the given username.
 def get_ticker_symbols(ticker_symbol, username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol.upper(), get_id(username),))
+	cursor.execute("SELECT ticker_symbol FROM holdings WHERE ticker_symbol=? AND username=?", (ticker_symbol.upper(), username,))
 	ticker_symbols = cursor.fetchall()
 	cursor.close()
 	connection.close()
@@ -107,7 +97,7 @@ def get_ticker_symbols(ticker_symbol, username):
 def get_number_of_shares(ticker_symbol, username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=? AND user_id=?", (ticker_symbol.upper(), get_id(username),))
+	cursor.execute("SELECT number_of_shares FROM holdings WHERE ticker_symbol=? AND username=?", (ticker_symbol.upper(), username,))
 	number_of_shares = cursor.fetchall()[0][0]
 	cursor.close()
 	connection.close()
@@ -116,8 +106,7 @@ def get_number_of_shares(ticker_symbol, username):
 # Creates a new pandas DataFrame that contains the rows in holdings database table for the given user.
 def get_holdings_dataframe(username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
-	user_id = get_id(username)
-	df = pd.read_sql_query("SELECT * FROM holdings WHERE user_id={0}".format(user_id), connection)
+	df = pd.read_sql_query("SELECT * FROM holdings WHERE username=?", connection, params=[username])
 	return df
 
 ### UPDATE / INSERT
@@ -135,7 +124,7 @@ def update_balance(new_balance, username):
 def update_number_of_shares(new_number_of_shares, ticker_symbol, username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=? AND user_id=?", (new_number_of_shares, ticker_symbol.upper(), get_id(username),))
+	cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=? AND username=?", (new_number_of_shares, ticker_symbol.upper(), username,))
 	connection.commit()
 	cursor.close()
 	connection.close()
@@ -148,8 +137,8 @@ def insert_holdings_row(ticker_symbol, trade_volume, price, username):
 				ticker_symbol,
 				number_of_shares,
 				volume_weighted_average_price,
-				user_id
-			) VALUES(?,?,?,?);""", (ticker_symbol.upper(), trade_volume, price, get_id(username),)
+				username
+			) VALUES(?,?,?,?);""", (ticker_symbol.upper(), trade_volume, price, username,)
 	)
 	connection.commit()
 	cursor.close()
@@ -164,10 +153,10 @@ def insert_orders_row(transaction_type, ticker_symbol, trade_volume, price, user
 				unix_time,
 				transaction_type,
 				ticker_symbol,
-				last_price,
 				trade_volume,
-				user_id
-			) VALUES(?,?,?,?,?,?);""", (unix_time, transaction_type, ticker_symbol.upper(), price, trade_volume, get_id(username),)
+				last_price,
+				username
+			) VALUES(?,?,?,?,?,?);""", (unix_time, transaction_type, ticker_symbol.upper(), trade_volume, price, username,)
 	)
 	connection.commit()
 	cursor.close()
