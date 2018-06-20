@@ -50,6 +50,8 @@ def login(username, password):
 	connection.close()
 	return "Success: You have been logged in to your account!"
 
+### SELECT (GET)
+
 # Checks if a username exists in a row in the users database table.
 def username_exists(username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
@@ -70,8 +72,6 @@ def account_exists(username, password):
 	cursor.close()
 	connection.close()
 	return result
-
-### SELECT (GET)
 
 # Gets the balance value from the row in the users database table for the given username.
 def get_balance(username):
@@ -114,9 +114,10 @@ def get_number_of_shares(ticker_symbol, username):
 	return number_of_shares
 
 # Creates a new pandas DataFrame that contains the rows in holdings database table for the given user.
-def get_holdings_data_frame(username):
+def get_holdings_dataframe(username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
-	df = pd.read_sql_query("SELECT * FROM holdings WHERE user_id=?", (get_id(username),))
+	user_id = get_id(username)
+	df = pd.read_sql_query("SELECT * FROM holdings WHERE user_id={0}".format(user_id), connection)
 	return df
 
 ### UPDATE / INSERT

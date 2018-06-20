@@ -11,11 +11,7 @@ def display_header():
 	print("Terminal Trader".center(65, " "))
 	print("=".center(65, "="))
 
-#def display_holdings(username):
-#	df = mapper.get_holdings_data_frame(username)
-#	print(df)
-#	exit = wait("main menu")
-
+### Menus
 def start_menu():
 	display_header()
 	print("Welcome to Terminal Trader, a simple terminal trading application \nfor buying and selling stocks with real market data.\n")
@@ -61,12 +57,13 @@ def login_menu():
 def main_menu(username):
 	display_header()
 	print("What do you want to do?")
-	print("Balance / a - Check your account balance.")
-	print("Buy     / b - Buy stock at the current market price.")
-	print("Sell    / s - Sell stock at the current market price.")
-	print("Lookup  / l - Look up the ticker symbol for a company.")
-	print("Quote   / q - Get the current market price for a company's stock.")
-	print("Exit    / e - Exit Terminal Trader.")
+	print("Balance   / a - Check your account balance.")
+	print("Buy       / b - Buy stock at the current market price.")
+	print("Sell      / s - Sell stock at the current market price.")
+	print("Lookup    / l - Look up the ticker symbol for a company.")
+	print("Quote     / q - Get the current market price for a company's stock.")
+	print("Portfolio / p - Displays all holdings in your portfolio.")
+	print("Exit      / e - Exit Terminal Trader.")
 	user_input = input()
 	return user_input
 
@@ -101,12 +98,16 @@ def exit_message():
 	display_header()
 	print("Thanks for playing Terminal Trader!\n")
 
+def display_dataframe(df):
+	display_header()
+	print(df)
+	exit = wait("previous menu")
 
 def wait(str):
 	x = input("\nPress \"Enter\" to access the {0} ...".format(str))
 	return x
 
-### Error handling and displaying
+### Error handling/displaying
 def display_response(res):
 	if res != "exit":
 		print(res)

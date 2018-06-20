@@ -85,7 +85,8 @@ def game_loop(username):
 				view.display_last_price(last_price)
 			# Portfolio (Holdings)
 			elif user_input.lower() in portfolio_inputs:
-				res = model.display_holdings(username)
+				df = model.get_holdings_dataframe(username)
+				view.display_dataframe(df)
 			# Exit
 			elif user_input.lower() in exit_inputs:
 				view.exit_message()

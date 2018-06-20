@@ -105,6 +105,9 @@ def login(username, password):
 def get_balance(username):
 	return mapper.get_balance(username)
 
+def get_holdings_dataframe(username):
+	return mapper.get_holdings_dataframe(username)
+
 if __name__ == "__main__":
 	# Test
 	# - Buy one share of AT&T at current market price (fair value)
