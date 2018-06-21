@@ -37,8 +37,14 @@ def buy(ticker_symbol, trade_volume, username):
 			# Gets the number of shares from holdings database table for the company with ticker_symbol.
 			curr_number_of_shares = mapper.get_number_of_shares(ticker_symbol, username)
 			new_number_of_shares = curr_number_of_shares + int(trade_volume)
+			# Gets the last price stored in the holdings database table for a given ticker_symbol.
+			curr_price = mapper.get_last_price(ticker_symbol, username)
+			# Calculates the new VWAP based on old values in the database table.
+			new_vwap = calculate_vwap(curr_price, curr_number_of_shares, last_price, trade_volume)
 			# Updates the holdings database table with the new number of shares after buying stock.
 			mapper.update_number_of_shares(new_number_of_shares, ticker_symbol, username)
+			# Updates the VWAP in the holdings database table with a new value.
+			mapper.update_volume_weighted_average_price(new_vwap, ticker_symbol, username)
 			# Inserts a new row to the orders database table after buying the stock.
 			mapper.insert_orders_row("buy", ticker_symbol, trade_volume, last_price, username)
 			return "Stock purchase was successful."
@@ -84,6 +90,13 @@ def sell(ticker_symbol, trade_volume, username):
 	else:
 		# Returns error response.
 		return "Error: You do not have enough shares to sell to complete that trade."
+
+# Calculates the new volume weighted average to update the holdings database table.
+def calculate_vwap(curr_price, curr_num_shares, new_price, new_num_shares):
+	old = float(curr_price) * float(curr_num_shares)
+	new = float(new_price) * float(new_num_shares)
+	total_volume = float(curr_num_shares) + float(new_num_shares)
+	return (old + new) / total_volume
 
 ### Wrapper
 def get_ticker_symbol(company_name):

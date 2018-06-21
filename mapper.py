@@ -103,6 +103,16 @@ def get_number_of_shares(ticker_symbol, username):
 	connection.close()
 	return number_of_shares
 
+# Gets the last price stored in the holdings database table for a given ticker_symbol.
+def get_last_price(ticker_symbol, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("SELECT volume_weighted_average_price FROM holdings WHERE ticker_symbol=? AND username=?", (ticker_symbol.upper(), username,))
+	last_price = cursor.fetchall()[0][0]
+	cursor.close()
+	connection.close()
+	return last_price
+
 # Creates a new pandas DataFrame that contains the rows in holdings database table for the given user.
 def get_holdings_dataframe(username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
@@ -125,6 +135,15 @@ def update_number_of_shares(new_number_of_shares, ticker_symbol, username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
 	cursor.execute("UPDATE holdings SET number_of_shares=? WHERE ticker_symbol=? AND username=?", (new_number_of_shares, ticker_symbol.upper(), username,))
+	connection.commit()
+	cursor.close()
+	connection.close()
+
+# Updates the volume weighted average price in the holdings database table with a new value.
+def update_volume_weighted_average_price(new_vwap, ticker_symbol, username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("UPDATE holdings SET volume_weighted_average_price=? WHERE ticker_symbol=? AND username=?", (new_vwap, ticker_symbol.upper(), username,))
 	connection.commit()
 	cursor.close()
 	connection.close()
