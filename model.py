@@ -39,12 +39,12 @@ def buy(ticker_symbol, trade_volume, username):
 			new_number_of_shares = curr_number_of_shares + int(trade_volume)
 			# Gets the last price stored in the holdings database table for a given ticker_symbol.
 			curr_price = mapper.get_last_price(ticker_symbol, username)
-			# Calculates the new VWAP based on old values in the database table.
+			# Calculates the new VWAP based on the current values in the database table and the most recent (last) prices.
 			new_vwap = calculate_vwap(curr_price, curr_number_of_shares, last_price, trade_volume)
-			# Updates the holdings database table with the new number of shares after buying stock.
-			mapper.update_number_of_shares(new_number_of_shares, ticker_symbol, username)
 			# Updates the VWAP in the holdings database table with a new value.
 			mapper.update_volume_weighted_average_price(new_vwap, ticker_symbol, username)
+			# Updates the holdings database table with the new number of shares after buying stock.
+			mapper.update_number_of_shares(new_number_of_shares, ticker_symbol, username)
 			# Inserts a new row to the orders database table after buying the stock.
 			mapper.insert_orders_row("buy", ticker_symbol, trade_volume, last_price, username)
 			return "Stock purchase was successful."
@@ -69,6 +69,7 @@ def sell(ticker_symbol, trade_volume, username):
 	ticker_symbols = mapper.get_ticker_symbols(ticker_symbol, username)
 	if len(ticker_symbols) == 0:
 		return "Error: You do not hold any shares from that company."
+	# Gets needed values from the user and holdings database tables.
 	balance = mapper.get_balance(username)
 	number_of_shares = mapper.get_number_of_shares(ticker_symbol, username)
 	new_number_of_shares = number_of_shares - int(trade_volume)
@@ -81,8 +82,16 @@ def sell(ticker_symbol, trade_volume, username):
 		else:
 			# Updates holdings database table with the new number of shares.
 			mapper.update_number_of_shares(new_number_of_shares, ticker_symbol, username)
-		new_balance = balance + balance_to_add
+		# Gets the last price stored in the holdings database table for a given ticker_symbol.
+		curr_price = mapper.get_last_price(ticker_symbol, username)
+		# Gets the number of shares from holdings database table for the company with ticker_symbol.
+		curr_number_of_shares = mapper.get_number_of_shares(ticker_symbol, username)
+		# Calculates the new VWAP based on old values in the database table.
+		new_vwap = calculate_vwap(curr_price, curr_number_of_shares, last_price, trade_volume)
+		# Updates the VWAP in the holdings database table with a new value.
+		mapper.update_volume_weighted_average_price(new_vwap, ticker_symbol, username)
 		# Updates users database table with the new balance after selling the stock.
+		new_balance = balance + balance_to_add
 		mapper.update_balance(new_balance, username)
 		# Inserts a new row to the orders database table after selling the stock.
 		mapper.insert_orders_row("sell", ticker_symbol, trade_volume, last_price, username)
