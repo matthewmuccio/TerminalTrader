@@ -5,6 +5,8 @@ import mapper
 import wrapper
 
 
+### User
+# Buy
 def buy(ticker_symbol, trade_volume, username):
 	last_price = wrapper.get_last_price(ticker_symbol)
 	# Error handling: if the user enters a ticker symbol that does not exist.
@@ -52,6 +54,7 @@ def buy(ticker_symbol, trade_volume, username):
 		# Returns error response.
 		return "Error: You do not have enough money in your balance to execute that trade."
 
+# Sell
 def sell(ticker_symbol, trade_volume, username):
 	last_price = wrapper.get_last_price(ticker_symbol)
 	# Error handling: if the user enters a ticker symbol that does not exist.
@@ -107,6 +110,7 @@ def calculate_vwap(curr_price, curr_num_shares, new_price, new_num_shares):
 	total_volume = float(curr_num_shares) + float(new_num_shares)
 	return (old + new) / total_volume
 
+### Admin
 # Calculates new deposit, and handles errors.
 def calculate_new_deposit(balance, balance_to_add):
 	if balance == "exit":
@@ -122,6 +126,15 @@ def calculate_new_withdraw(balance, balance_to_add):
 		return "exit"
 	try:
 		return balance - abs(float(balance_to_add))
+	except (ValueError, TypeError):
+		return "exit"
+
+# Calculates the new balance to set, and handles errors.
+def calculate_new_set(balance, balance_to_set):
+	if balance == "exit":
+		return "exit"
+	try:
+		return float(balance_to_set)
 	except (ValueError, TypeError):
 		return "exit"
 

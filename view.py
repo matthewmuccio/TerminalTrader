@@ -87,7 +87,7 @@ def admin_display_balance(username, balance):
 	if balance == "exit":
 		print("There is no account with username \"{0}\" in our database.".format(username))
 	else:
-		print("{0}'s balance: ${1}".format(username, balance))
+		print("{0}'s balance: ${1}".format(username, format(balance, ".2f")))
 	exit = wait("previous menu")
 
 def admin_display_new_balance(username, old_balance, new_balance):
@@ -95,7 +95,7 @@ def admin_display_new_balance(username, old_balance, new_balance):
 	if old_balance == "exit" or new_balance == "exit":
 		print("There was an error with your input. Please try again.")
 	else:
-		print("{0}'s balance has been updated from ${1} to ${2}.".format(username, old_balance, new_balance))
+		print("{0}'s balance has been updated from ${1} to ${2}.".format(username, format(old_balance, ".2f"), format(new_balance, ".2f")))
 	exit = wait("previous menu")
 
 # Deposit
@@ -118,7 +118,12 @@ def admin_withdraw_menu():
 
 # Set
 def admin_set_menu():
-	pass
+	display_header()
+	print("Which user's balance would you like to set?")
+	username = input("Username: ")
+	print("To what dollar value would you like to set {0}'s account?".format(username))
+	balance = input("Balance to set: $")
+	return username, balance
 
 # Buy
 def admin_buy_menu():

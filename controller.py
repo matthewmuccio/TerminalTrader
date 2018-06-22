@@ -84,7 +84,7 @@ def admin_loop(username):
 				view.admin_display_new_balance(username, balance, new_balance)
 			# Set
 			elif user_input.lower() in set_inputs:
-				username, balance_to_set = view.admin_set_menu() # TODO
+				username, balance_to_set = view.admin_set_menu()
 				balance = model.get_balance(username)
 				new_balance = model.calculate_new_set(balance, balance_to_set) # TODO
 				model.update_balance(new_balance, username)
