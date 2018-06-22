@@ -139,7 +139,7 @@ def admin_portfolio_menu():
 def admin_display_users(users):
 	display_header()
 	print("List of Terminal Trader Users")
-	print("\n".join(x[0] for x in users))
+	print("\n".join(x[0] for x in sorted(users)))
 	exit = wait("previous menu")
 
 ### User
