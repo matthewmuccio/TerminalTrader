@@ -138,20 +138,23 @@ def admin_display_leaderboard(leaderboard):
 	i = 1
 	for user, earnings in leaderboard:
 		if i <= 10:
-			print("{0}. {1} - ${2}".format(i, user, earnings))
+			print("{0}. {1} - ${2}".format(i, user, format(earnings, ".2f")))
 			i += 1
 		else:
 			break
 	exit = wait("previous menu")
 
 def admin_leaderboard_wait():
-	print("Calculating profits for each user ...")
+	print("\nCalculating profits for each user ...")
 
 # Users
 def admin_display_users(users):
 	display_header()
 	print("List of Terminal Trader Users")
-	print("\n".join(user for user in sorted(users)))
+	i = 1
+	for user in sorted(users):
+		print("{0}. {1}".format(i, user))
+		i += 1
 	exit = wait("previous menu")
 
 ### User
@@ -207,14 +210,15 @@ def exit_message():
 	print("Thanks for playing Terminal Trader!\n")
 
 # Displays the user's portfolio in a pandas DataFrame.
-def display_dataframe(df, earnings, username):
+def display_dataframe(df, balance, earnings, username):
 	display_header()
 	if df.empty:
 		print("There is no portfolio to display for {0}.".format(username))
 		print("You must make a stock purchase first.")
 	else:
 		print("{0}'s Portfolio".format(username))
-		print("{0}'s estimated earnings: ${1}".format(username, format(earnings, ".2f")))
+		print("Liquid balance: ${0}".format(format(balance, ".2f")))
+		print("Estimated earnings: ${0}".format(format(earnings, ".2f")))
 		print(df)
 	exit = wait("previous menu")
 
