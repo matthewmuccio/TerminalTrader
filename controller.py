@@ -36,8 +36,57 @@ def start_menu():
 			print(status)
 			return "exit"
 
+def admin_loop(username):
+	# Admin menu (balance, deposit, withdraw, buy, sell, portfolio, exit)
+	admin_done = False
+	while not admin_done:
+		balance_inputs = ["a", "balance"]
+		deposit_inputs = ["d", "deposit"]
+		withdraw_inputs = ["w", "withdraw"]
+		buy_inputs = ["b", "buy"]
+		sell_inputs = ["s", "sell"]
+		portfolio_inputs = ["p", "portfolio"]
+		exit_inputs = ["e", "exit"]
+
+		acceptable_inputs = balance_inputs\
+					+deposit_inputs\
+					+withdraw_inputs\
+					+buy_inputs\
+					+sell_inputs\
+					+portfolio_inputs\
+					+exit_inputs
+
+		user_input = view.admin_menu()
+		# If the user input is acceptable.
+		if user_input.lower() in acceptable_inputs:
+			# Balance
+			if user_input.lower() in balance_inputs:
+				pass
+			# Deposit
+			elif user_input.lower() in deposit_inputs:
+				pass
+			# Withdraw
+			elif user_input.lower() in withdraw_inputs:
+				pass
+			# Buy
+			elif user_input.lower() in buy_inputs:
+				pass
+			# Sell
+			elif user_input.lower() in sell_inputs:
+				pass
+			# Portfolio
+			elif user_input.lower() in portfolio_inputs:
+				pass
+			# Exit
+			elif user_input.lower() in exit_inputs:
+				view.exit_message()
+				admin_done = True
+			# Otherwise
+			else:
+				return "Error"
+
 def game_loop(username):
-	# Main menu (buy, sell, lookup, quote, exit)
+	# Main menu (balance, buy, sell, lookup, quote, portfolio, exit)
 	main_done = False
 	while not main_done:
 		balance_inputs = ["a", "balance"]
@@ -101,4 +150,7 @@ if __name__ == "__main__":
 	# or "exit" if the user chooses to exit the terminal.
 	result = start_menu()
 	if result != "exit":
-		game_loop(result)
+		if result == "admin":
+			admin_loop(result)
+		else:
+			game_loop(result)
