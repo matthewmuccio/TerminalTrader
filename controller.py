@@ -37,7 +37,7 @@ def start_menu():
 			return "exit"
 
 def admin_loop(username):
-	# Admin menu (balance, deposit, withdraw, set, portfolio, users, exit)
+	# Admin menu (balance, deposit, withdraw, set, portfolio, leaderboard, users, exit)
 	admin_done = False
 	while not admin_done:
 		balance_inputs = ["a", "balance"]
@@ -84,7 +84,7 @@ def admin_loop(username):
 			elif user_input.lower() in set_inputs:
 				username, balance_to_set = view.admin_set_menu()
 				balance = model.get_balance(username)
-				new_balance = model.calculate_new_set(balance, balance_to_set) # TODO
+				new_balance = model.calculate_new_set(balance, balance_to_set)
 				model.update_balance(new_balance, username)
 				view.admin_display_new_balance(username, balance, new_balance)
 			# Portfolio

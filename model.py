@@ -153,6 +153,16 @@ def get_earnings(username):
 			earnings += float(last_price) * user_num_shares
 	return earnings
 
+# Gets a sorted dictionary representing the leaderboard where the key is the username and the value is their earnings.
+def get_leaderboard():
+	leaderboard = {}
+	users = get_users()
+	for user in users:
+		earnings = get_earnings(user)
+		leaderboard[user] = earnings
+	sorted_leaderboard = sorted(leaderboard.items(), key=itemgetter(1), reverse=True)
+	return sorted_leaderboard
+
 ### Wrapper
 def get_ticker_symbol(company_name):
 	return wrapper.get_ticker_symbol(company_name)
@@ -179,12 +189,3 @@ def update_balance(new_balance, username):
 ### Admin
 def get_users():
 	return mapper.get_users()
-
-def get_leaderboard():
-	leaderboard = {}
-	users = get_users()
-	for user in users:
-		earnings = get_earnings(user)
-		leaderboard[user] = earnings
-	sorted_leaderboard = sorted(leaderboard.items(), key=itemgetter(1), reverse=True)
-	return sorted_leaderboard

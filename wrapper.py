@@ -17,8 +17,6 @@ def get_last_price(ticker_symbol):
 
 def get_ticker_symbol(company_name):
 	endpoint = "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input=" + company_name
-	# TODO: Refactor this line so that it does not just take the first element in the
-	# iterable that is returned, and assume it's the symbol we want.
 	try:
 		response = json.loads(requests.get(endpoint).text)[0]
 		ticker_symbol = response["Symbol"]
