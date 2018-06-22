@@ -107,6 +107,24 @@ def calculate_vwap(curr_price, curr_num_shares, new_price, new_num_shares):
 	total_volume = float(curr_num_shares) + float(new_num_shares)
 	return (old + new) / total_volume
 
+# Calculates new deposit, and handles errors.
+def calculate_new_deposit(balance, balance_to_add):
+	if balance == "exit":
+		return "exit"
+	try:
+		return balance + abs(float(balance_to_add))
+	except (ValueError, TypeError):
+		return "exit"
+
+# Calculates new withdraw, and handles errors.
+def calculate_new_withdraw(balance, balance_to_add):
+	if balance == "exit":
+		return "exit"
+	try:
+		return balance - abs(float(balance_to_add))
+	except (ValueError, TypeError):
+		return "exit"
+
 ### Wrapper
 def get_ticker_symbol(company_name):
 	return wrapper.get_ticker_symbol(company_name)
@@ -126,3 +144,6 @@ def get_balance(username):
 
 def get_holdings_dataframe(username):
 	return mapper.get_holdings_dataframe(username)
+
+def update_balance(new_balance, username):
+	return mapper.update_balance(new_balance, username)

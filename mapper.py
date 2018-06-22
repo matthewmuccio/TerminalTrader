@@ -78,7 +78,11 @@ def get_balance(username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
 	cursor.execute("SELECT balance FROM users WHERE username=?", (username,))
-	balance = cursor.fetchall()[0][0]
+	# Error handling for an unknown username.
+	try:
+		balance = cursor.fetchall()[0][0]
+	except IndexError:
+		balance = "exit"
 	cursor.close()
 	connection.close()
 	return balance
@@ -123,12 +127,13 @@ def get_holdings_dataframe(username):
 
 # Updates the user's balance in the users database table.
 def update_balance(new_balance, username):
-	connection = sqlite3.connect("master.db", check_same_thread=False)
-	cursor = connection.cursor()
-	cursor.execute("UPDATE users SET balance=? WHERE username=?", (new_balance, username,))
-	connection.commit()
-	cursor.close()
-	connection.close()
+	if new_balance != "exit":
+		connection = sqlite3.connect("master.db", check_same_thread=False)
+		cursor = connection.cursor()
+		cursor.execute("UPDATE users SET balance=? WHERE username=?", (new_balance, username,))
+		connection.commit()
+		cursor.close()
+		connection.close()
 
 # Updates the number of shares in the holdings database table with a new number of shares.
 def update_number_of_shares(new_number_of_shares, ticker_symbol, username):

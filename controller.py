@@ -61,13 +61,23 @@ def admin_loop(username):
 		if user_input.lower() in acceptable_inputs:
 			# Balance
 			if user_input.lower() in balance_inputs:
-				pass
+				username = view.admin_balance_menu()
+				balance = model.get_balance(username)
+				view.admin_display_balance(username, balance)
 			# Deposit
 			elif user_input.lower() in deposit_inputs:
-				pass
+				username, balance_to_add = view.admin_deposit_menu()
+				balance = model.get_balance(username)
+				new_balance = model.calculate_new_deposit(balance, balance_to_add)
+				model.update_balance(new_balance, username)
+				view.admin_display_new_balance(username, balance, new_balance)
 			# Withdraw
 			elif user_input.lower() in withdraw_inputs:
-				pass
+				username, balance_to_subtract = view.admin_withdraw_menu()
+				balance = model.get_balance(username)
+				new_balance = model.calculate_new_withdraw(balance, balance_to_subtract)
+				model.update_balance(new_balance, username)
+				view.admin_display_new_balance(username, balance, new_balance)
 			# Buy
 			elif user_input.lower() in buy_inputs:
 				pass
@@ -76,7 +86,9 @@ def admin_loop(username):
 				pass
 			# Portfolio
 			elif user_input.lower() in portfolio_inputs:
-				pass
+				username = view.admin_portfolio_menu()
+				df = model.get_holdings_dataframe(username)
+				view.display_dataframe(df, username)
 			# Exit
 			elif user_input.lower() in exit_inputs:
 				view.exit_message()
@@ -135,7 +147,7 @@ def game_loop(username):
 			# Portfolio (Holdings)
 			elif user_input.lower() in portfolio_inputs:
 				df = model.get_holdings_dataframe(username)
-				view.display_dataframe(df)
+				view.display_dataframe(df, username)
 			# Exit
 			elif user_input.lower() in exit_inputs:
 				view.exit_message()
