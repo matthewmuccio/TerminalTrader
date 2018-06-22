@@ -91,7 +91,8 @@ def admin_loop(username):
 			elif user_input.lower() in portfolio_inputs:
 				username = view.admin_portfolio_menu()
 				df = model.get_holdings_dataframe(username)
-				view.display_dataframe(df, username)
+				earnings = model.get_earnings(username)
+				view.display_dataframe(df, earnings, username)
 			# Leaderboard
 			elif user_input.lower() in leaderboard_inputs:
 				view.admin_leaderboard_wait()
@@ -159,7 +160,8 @@ def game_loop(username):
 			# Portfolio (Holdings)
 			elif user_input.lower() in portfolio_inputs:
 				df = model.get_holdings_dataframe(username)
-				view.display_dataframe(df, username)
+				earnings = model.get_earnings(username)
+				view.display_dataframe(df, earnings, username)
 			# Exit
 			elif user_input.lower() in exit_inputs:
 				view.exit_message()

@@ -207,13 +207,14 @@ def exit_message():
 	print("Thanks for playing Terminal Trader!\n")
 
 # Displays the user's portfolio in a pandas DataFrame.
-def display_dataframe(df, username):
+def display_dataframe(df, earnings, username):
 	display_header()
 	if df.empty:
 		print("There is no portfolio to display for {0}.".format(username))
 		print("You must make a stock purchase first.")
 	else:
 		print("{0}'s Portfolio".format(username))
+		print("{0}'s estimated earnings: ${1}".format(username, format(earnings, ".2f")))
 		print(df)
 	exit = wait("previous menu")
 
