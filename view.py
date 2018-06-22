@@ -63,15 +63,14 @@ def login_menu():
 def admin_menu():
 	display_header()
 	print("Hello Mr. Admin, what do you want to do?")
-	print("Balance   / a - Check a user's account balance.")
-	print("Deposit   / d - Deposit into a user's account balance.")
-	print("Withdraw  / w - Withdraw from a user's account balance.")
-	print("Set       / t - Set a user's account balance.")
-	print("Buy       / b - Buy stock for a user's account.")
-	print("Sell      / s - Sell stock for a user's account.")
-	print("Portfolio / p - Display all holdings in a user's portfolio.")
-	print("Users     / u - Display a list of all Terminal Trader users.")
-	print("Exit      / e - Exit Terminal Trader.")
+	print("Balance     / a - Check a user's account balance.")
+	print("Deposit     / d - Deposit into a user's account balance.")
+	print("Withdraw    / w - Withdraw from a user's account balance.")
+	print("Set         / t - Set a user's account balance.")
+	print("Portfolio   / p - Display all holdings in a user's portfolio.")
+	print("Leaderboard / l - Display a list of the top 10 users by portfolio earnings.")
+	print("Users       / u - Display a list of all users in our database.")
+	print("Exit        / e - Exit Terminal Trader.")
 	user_input = input()
 	return user_input
 
@@ -125,14 +124,6 @@ def admin_set_menu():
 	balance = input("Balance to set: $")
 	return username, balance
 
-# Buy
-def admin_buy_menu():
-	pass
-
-# Sell
-def admin_sell_menu():
-	pass
-
 # Portfolio
 def admin_portfolio_menu():
 	display_header()
@@ -140,11 +131,27 @@ def admin_portfolio_menu():
 	username = input("Username: ")
 	return username
 
+# Leaderboard
+def admin_display_leaderboard(leaderboard):
+	display_header()
+	print("List of the Top 10 Users by Portfolio Earnings")
+	i = 1
+	for user, earnings in leaderboard:
+		if i <= 10:
+			print("{0}. {1} - ${2}".format(i, user, earnings))
+			i += 1
+		else:
+			break
+	exit = wait("previous menu")
+
+def admin_leaderboard_wait():
+	print("Calculating profits for each user ...")
+
 # Users
 def admin_display_users(users):
 	display_header()
 	print("List of Terminal Trader Users")
-	print("\n".join(x[0] for x in sorted(users)))
+	print("\n".join(user for user in sorted(users)))
 	exit = wait("previous menu")
 
 ### User

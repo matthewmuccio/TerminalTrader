@@ -121,11 +121,23 @@ def get_last_price(ticker_symbol, username):
 def get_users():
 	connection = sqlite3.connect("master.db", check_same_thread=False)
 	cursor = connection.cursor()
-	cursor.execute("SELECT username FROM users")
-	users = cursor.fetchall()
+	cursor.execute("SELECT username FROM users WHERE username NOT LIKE 'admin'")
+	users = cursor.fetchall() # List of tuples
+	users_list = [str(user[0]) for user in users] # List of strings
 	cursor.close()
 	connection.close()
-	return users
+	return users_list
+
+# Gets all the ticker symbols in a given user's portfolio.
+def get_ticker_symbols_from_user(username):
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("SELECT ticker_symbol FROM holdings WHERE username=?", (username,))
+	ticker_symbols = cursor.fetchall() # List of tuples
+	ticker_symbols_list = [str(t[0]) for t in ticker_symbols]
+	cursor.close()
+	connection.close()
+	return ticker_symbols_list
 
 # Creates a new pandas DataFrame that contains the rows in holdings database table for the given user.
 def get_holdings_dataframe(username):

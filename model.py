@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 
+from operator import itemgetter
+
 import mapper
 import wrapper
 
@@ -138,6 +140,19 @@ def calculate_new_set(balance, balance_to_set):
 	except (ValueError, TypeError):
 		return "exit"
 
+# Gets the portfolio earnings for a given username.
+def get_earnings(username):
+	user_ticker_symbols = mapper.get_ticker_symbols_from_user(username)
+	earnings = 0.0
+	for t in user_ticker_symbols:
+		last_price = wrapper.get_last_price(t) # Current market price
+		user_num_shares = mapper.get_number_of_shares(t, username)
+		if last_price == "exit":
+			earnings += 0.0
+		else:
+			earnings += float(last_price) * user_num_shares
+	return earnings
+
 ### Wrapper
 def get_ticker_symbol(company_name):
 	return wrapper.get_ticker_symbol(company_name)
@@ -161,5 +176,15 @@ def get_holdings_dataframe(username):
 def update_balance(new_balance, username):
 	return mapper.update_balance(new_balance, username)
 
+### Admin
 def get_users():
 	return mapper.get_users()
+
+def get_leaderboard():
+	leaderboard = {}
+	users = get_users()
+	for user in users:
+		earnings = get_earnings(user)
+		leaderboard[user] = earnings
+	sorted_leaderboard = sorted(leaderboard.items(), key=itemgetter(1), reverse=True)
+	return sorted_leaderboard

@@ -37,16 +37,15 @@ def start_menu():
 			return "exit"
 
 def admin_loop(username):
-	# Admin menu (balance, deposit, withdraw, set, buy, sell, portfolio, users, exit)
+	# Admin menu (balance, deposit, withdraw, set, portfolio, users, exit)
 	admin_done = False
 	while not admin_done:
 		balance_inputs = ["a", "balance"]
 		deposit_inputs = ["d", "deposit"]
 		withdraw_inputs = ["w", "withdraw"]
 		set_inputs = ["t", "set"]
-		buy_inputs = ["b", "buy"]
-		sell_inputs = ["s", "sell"]
 		portfolio_inputs = ["p", "portfolio"]
+		leaderboard_inputs = ["l", "leaderboard"]
 		users_inputs = ["u", "users"]
 		exit_inputs = ["e", "exit"]
 
@@ -54,9 +53,8 @@ def admin_loop(username):
 					+deposit_inputs\
 					+withdraw_inputs\
 					+set_inputs\
-					+buy_inputs\
-					+sell_inputs\
 					+portfolio_inputs\
+					+leaderboard_inputs\
 					+users_inputs\
 					+exit_inputs
 
@@ -89,17 +87,16 @@ def admin_loop(username):
 				new_balance = model.calculate_new_set(balance, balance_to_set) # TODO
 				model.update_balance(new_balance, username)
 				view.admin_display_new_balance(username, balance, new_balance)
-			# Buy
-			elif user_input.lower() in buy_inputs:
-				pass
-			# Sell
-			elif user_input.lower() in sell_inputs:
-				pass
 			# Portfolio
 			elif user_input.lower() in portfolio_inputs:
 				username = view.admin_portfolio_menu()
 				df = model.get_holdings_dataframe(username)
 				view.display_dataframe(df, username)
+			# Leaderboard
+			elif user_input.lower() in leaderboard_inputs:
+				view.admin_leaderboard_wait()
+				leaderboard = model.get_leaderboard()
+				view.admin_display_leaderboard(leaderboard)
 			# Users
 			elif user_input.lower() in users_inputs:
 				users = model.get_users()
