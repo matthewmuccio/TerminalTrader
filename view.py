@@ -56,7 +56,7 @@ def login_menu():
 
 def main_menu(username):
 	display_header()
-	print("What do you want to do?")
+	print("Hello {0}, what do you want to do?".format(username))
 	print("Balance   / a - Check your account balance.")
 	print("Buy       / b - Buy stock at the current market price.")
 	print("Sell      / s - Sell stock at the current market price.")
@@ -66,6 +66,10 @@ def main_menu(username):
 	print("Exit      / e - Exit Terminal Trader.")
 	user_input = input()
 	return user_input
+
+def admin_menu(username):
+	display_header()
+	print("")
 
 def balance_menu(balance):
 	display_header()

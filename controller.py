@@ -97,7 +97,8 @@ def game_loop(username):
 
 
 if __name__ == "__main__":
-	# result will either store the user's username if they log in/create an account, or "exit" if the user chooses to exit the terminal.
+	# result will either store the user's username if they log in/create an account,
+	# or "exit" if the user chooses to exit the terminal.
 	result = start_menu()
 	if result != "exit":
 		game_loop(result)
