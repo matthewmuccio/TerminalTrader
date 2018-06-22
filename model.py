@@ -147,3 +147,6 @@ def get_holdings_dataframe(username):
 
 def update_balance(new_balance, username):
 	return mapper.update_balance(new_balance, username)
+
+def get_users():
+	return mapper.get_users()

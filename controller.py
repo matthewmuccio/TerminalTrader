@@ -37,23 +37,27 @@ def start_menu():
 			return "exit"
 
 def admin_loop(username):
-	# Admin menu (balance, deposit, withdraw, buy, sell, portfolio, exit)
+	# Admin menu (balance, deposit, withdraw, set, buy, sell, portfolio, users, exit)
 	admin_done = False
 	while not admin_done:
 		balance_inputs = ["a", "balance"]
 		deposit_inputs = ["d", "deposit"]
 		withdraw_inputs = ["w", "withdraw"]
+		set_inputs = ["t", "set"]
 		buy_inputs = ["b", "buy"]
 		sell_inputs = ["s", "sell"]
 		portfolio_inputs = ["p", "portfolio"]
+		users_inputs = ["u", "users"]
 		exit_inputs = ["e", "exit"]
 
 		acceptable_inputs = balance_inputs\
 					+deposit_inputs\
 					+withdraw_inputs\
+					+set_inputs\
 					+buy_inputs\
 					+sell_inputs\
 					+portfolio_inputs\
+					+users_inputs\
 					+exit_inputs
 
 		user_input = view.admin_menu()
@@ -78,6 +82,13 @@ def admin_loop(username):
 				new_balance = model.calculate_new_withdraw(balance, balance_to_subtract)
 				model.update_balance(new_balance, username)
 				view.admin_display_new_balance(username, balance, new_balance)
+			# Set
+			elif user_input.lower() in set_inputs:
+				username, balance_to_set = view.admin_set_menu() # TODO
+				balance = model.get_balance(username)
+				new_balance = model.calculate_new_set(balance, balance_to_set) # TODO
+				model.update_balance(new_balance, username)
+				view.admin_display_new_balance(username, balance, new_balance)
 			# Buy
 			elif user_input.lower() in buy_inputs:
 				pass
@@ -89,6 +100,10 @@ def admin_loop(username):
 				username = view.admin_portfolio_menu()
 				df = model.get_holdings_dataframe(username)
 				view.display_dataframe(df, username)
+			# Users
+			elif user_input.lower() in users_inputs:
+				users = model.get_users()
+				view.admin_display_users(users)
 			# Exit
 			elif user_input.lower() in exit_inputs:
 				view.exit_message()

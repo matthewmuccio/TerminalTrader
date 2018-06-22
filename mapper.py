@@ -117,6 +117,16 @@ def get_last_price(ticker_symbol, username):
 	connection.close()
 	return last_price
 
+# Gets a list of all Terminal Traders users in the users database table.
+def get_users():
+	connection = sqlite3.connect("master.db", check_same_thread=False)
+	cursor = connection.cursor()
+	cursor.execute("SELECT username FROM users")
+	users = cursor.fetchall()
+	cursor.close()
+	connection.close()
+	return users
+
 # Creates a new pandas DataFrame that contains the rows in holdings database table for the given user.
 def get_holdings_dataframe(username):
 	connection = sqlite3.connect("master.db", check_same_thread=False)
